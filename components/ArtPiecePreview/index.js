@@ -9,7 +9,7 @@ export default function ArtPiecePreview({ piece }) {
   return (
     <figure className={styles.figure}>
       <div className={styles.imageContainer}>
-        <FavoriteButton isFavorite={false} positionAbsolute />
+        <FavoriteButton slug={piece.slug} positionAbsolute />
         <Image
           className={styles.image}
           src={image}

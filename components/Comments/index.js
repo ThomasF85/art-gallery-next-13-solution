@@ -1,7 +1,25 @@
+"use client";
+
+import useLocalStorageState from "use-local-storage-state";
 import styles from "./index.module.css";
 
-// This form is missing an onSubmit handler
-export default function Comments({ comments }) {
+export default function Comments({ slug }) {
+  const [allComments, setAllComments] = useLocalStorageState("comments", {
+    defaultValue: {},
+  });
+
+  const comments = allComments[slug] || [];
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const { comment } = event.target.elements;
+    setAllComments((prev) => ({
+      ...prev,
+      [slug]: [...(prev[slug] || []), comment.value],
+    }));
+    event.target.reset();
+  }
+
   return (
     <section className={styles.wrapper}>
       <h2 className={styles.title}>Comments</h2>
@@ -14,7 +32,11 @@ export default function Comments({ comments }) {
           </li>
         ))}
       </ul>
-      <form className={styles.form} aria-label="add comments about art piece">
+      <form
+        onSubmit={handleSubmit}
+        className={styles.form}
+        aria-label="add comments about art piece"
+      >
         <label className={styles.label} htmlFor="comment">
           Add comment:
         </label>
