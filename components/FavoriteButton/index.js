@@ -2,31 +2,20 @@
 
 import Image from "next/image.js";
 import styles from "./index.module.css";
-import useLocalStorageState from "use-local-storage-state";
+import { useContext } from "react";
+import { FavoriteContext } from "@/lib/context/favoriteContext";
 
 export default function FavoriteButton({ slug, positionAbsolute = false }) {
-  const [favorites, setFavorites] = useLocalStorageState("favorites", {
-    defaultValue: [],
-  });
-
-  const isFavorite = favorites.find((favorite) => favorite === slug);
-
-  function toggleFavorite() {
-    if (isFavorite) {
-      setFavorites((prev) => prev.filter((favorite) => favorite !== slug));
-    } else {
-      setFavorites((prev) => [...prev, slug]);
-    }
-  }
+  const { isFavorite, toggleFavorite } = useContext(FavoriteContext);
 
   return (
     <button
       className={`${styles.button} ${positionAbsolute ? styles.absolute : ""} ${
-        isFavorite ? styles.favorite : ""
+        isFavorite(slug) ? styles.favorite : ""
       }`}
       type="button"
-      onClick={toggleFavorite}
-      aria-label={isFavorite ? "unlike" : "like"}
+      onClick={() => toggleFavorite(slug)}
+      aria-label={isFavorite(slug) ? "unlike" : "like"}
     >
       <Image src="/assets/heart.svg" width={40} height={40} alt="" />
     </button>

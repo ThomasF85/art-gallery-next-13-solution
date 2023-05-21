@@ -1,18 +1,13 @@
 "use client";
 
 import ArtPieces from "@/components/ArtPieces";
-import useLocalStorageState from "use-local-storage-state";
+import { FavoriteContext } from "@/lib/context/favoriteContext";
+import { useContext } from "react";
 
 export default function ClientPage({ pieces }) {
-  // Hook internally synchronizes state for different invocations
-  // => effectively acts as global state, no prop drilling required
-  const [favorites] = useLocalStorageState("favorites", {
-    defaultValue: [],
-  });
+  const { isFavorite } = useContext(FavoriteContext);
 
   return (
-    <ArtPieces
-      pieces={pieces.filter((piece) => favorites.includes(piece.slug))}
-    />
+    <ArtPieces pieces={pieces.filter((piece) => isFavorite(piece.slug))} />
   );
 }
