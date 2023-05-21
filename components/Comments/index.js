@@ -1,13 +1,11 @@
 "use client";
 
 import styles from "./index.module.css";
-import { useContext } from "react";
-import { CommentContext } from "@/lib/context/commentContext";
+import { useStore } from "@/lib/useStore";
 
 export default function Comments({ slug }) {
-  const { getComments, addComment } = useContext(CommentContext);
-
-  const comments = getComments(slug);
+  const comments = useStore((state) => state.comments[slug] || []);
+  const addComment = useStore((state) => state.addComment);
 
   function handleSubmit(event) {
     event.preventDefault();

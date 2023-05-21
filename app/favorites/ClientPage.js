@@ -1,13 +1,14 @@
 "use client";
 
 import ArtPieces from "@/components/ArtPieces";
-import { FavoriteContext } from "@/lib/context/favoriteContext";
-import { useContext } from "react";
+import { useStore } from "@/lib/useStore";
 
 export default function ClientPage({ pieces }) {
-  const { isFavorite } = useContext(FavoriteContext);
+  const favorites = useStore((state) => state.favorites);
 
   return (
-    <ArtPieces pieces={pieces.filter((piece) => isFavorite(piece.slug))} />
+    <ArtPieces
+      pieces={pieces.filter((piece) => favorites.includes(piece.slug))}
+    />
   );
 }

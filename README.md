@@ -3,6 +3,8 @@
 You find example solutions in the branches:
 
 - _feature/local-state_
+- _feature/context_
+- _feature/zustand_
 
 ## Challenge
 
@@ -70,66 +72,3 @@ export default function RootLayout({ children }) {
 - Access the store from any Client Component that needs it through the `useStore` hook. Try to push these uses of the store down the component tree.
 
 <img alt="recipe zustand" width="700px" src="./docs/recipe-zustand.png">
-
-## Possible Recipe: Zustand stores in Server and Client components
-
-- This is only for use when you are familiar with the inner workings of React and Zustand.
-- You can use a Zustand store in your Server Components using `useStore.getState`, synchronize the store on the client side with the store on the server side on the first client render and use the store on the client side using `useStore` as a hook.
-- Write a store initializer that sets the client store state once:
-
-```js
-"use client";
-
-import { useRef } from "react";
-import useStore from "./useStore";
-
-/*
-  Initializer sets state in client store exactly once before client
-  rendering starts. Otherwise it could trigger component updates while
-  the updated components are still rendering - thus causing errors (bad setState).
-  Make sure to call with all relevant state on every page.
-*/
-function StoreInitializer({ state }) {
-  const initialized = useRef(false);
-  if (!initialized.current) {
-    if (!useStore.getState().isInitialized) {
-      useStore.setState({ ...state, isInitialized: true });
-    }
-    initialized.current = true;
-  }
-  return null;
-}
-
-export default StoreInitializer;
-```
-
-- Make use of the initializer and set the state to the server store in every page:
-
-```js
-export default async function Page() {
-  const cards = await fetchData();
-
-  // Setting state to the server store for Server Components to use
-  useStore.setState({ cards });
-
-  return (
-    <>
-      {/* StoreInitializer is setting state to the client store*/}
-      <StoreInitializer state={{ cards }} />
-      <MyComponent />
-    </>
-  );
-}
-```
-
-In every Server Component that uses the state you can access it through:
-
-```js
-const cards = useStore.getState().cards;
-```
-
-In every Client Component that uses the state you can access it through `useStore` as a hook:
-
-```js
-const cards = useStore((state) => state.cards);
-```
