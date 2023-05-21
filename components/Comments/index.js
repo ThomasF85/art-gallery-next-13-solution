@@ -1,22 +1,18 @@
 "use client";
 
-import useLocalStorageState from "use-local-storage-state";
 import styles from "./index.module.css";
+import { useContext } from "react";
+import { CommentContext } from "@/lib/context/commentContext";
 
 export default function Comments({ slug }) {
-  const [allComments, setAllComments] = useLocalStorageState("comments", {
-    defaultValue: {},
-  });
+  const { getComments, addComment } = useContext(CommentContext);
 
-  const comments = allComments[slug] || [];
+  const comments = getComments(slug);
 
   function handleSubmit(event) {
     event.preventDefault();
     const { comment } = event.target.elements;
-    setAllComments((prev) => ({
-      ...prev,
-      [slug]: [...(prev[slug] || []), comment.value],
-    }));
+    addComment(slug, comment.value);
     event.target.reset();
   }
 
